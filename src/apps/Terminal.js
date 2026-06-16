@@ -100,14 +100,26 @@ export default class Terminal {
 
                     output.innerHTML +=
                         `
+                    
+                    
+                   
+                   
+                   
+                    
+                   
                     help<br>
-                    ls<br>
-                    pwd<br>
-                    cd [folder]<br>
-                    mkdir [name]<br>
-                    touch [name]<br>
-                    rm [name]<br>
-                    clear<br><br>
+ls<br>
+pwd<br>
+cd [folder]<br>
+mkdir [name]<br>
+touch [name]<br>
+rm [name]<br>
+cat [filename]<br>
+tree<br>
+whoami<br>
+date<br>
+echo [text]<br>
+clear<br><br>
                     `;
 
                     return;
@@ -341,6 +353,127 @@ export default class Terminal {
 
                     output.innerHTML +=
                         "directory changed<br><br>";
+
+                    return;
+
+                }
+
+                if (
+                    command === "whoami"
+                ) {
+
+                    output.innerHTML +=
+                        `
+        user:
+        ${user.uid}<br><br>
+        `;
+
+                    return;
+
+                }
+
+                if (
+                    command === "date"
+                ) {
+
+                    output.innerHTML +=
+                        `
+        ${new Date()}<br><br>
+        `;
+
+                    return;
+
+                }
+
+                if (
+                    command.startsWith(
+                        "echo "
+                    )
+                ) {
+
+                    const text =
+                        command.replace(
+                            "echo ",
+                            ""
+                        );
+
+                    output.innerHTML +=
+                        `${text}<br><br>`;
+
+                    return;
+
+                }
+
+                if (
+                    command.startsWith(
+                        "cat "
+                    )
+                ) {
+
+                    const fileName =
+                        command.replace(
+                            "cat ",
+                            ""
+                        );
+
+                    const file =
+                        await this.fs.getFile(
+                            user.uid,
+                            fileName
+                        );
+
+                    if (!file) {
+
+                        output.innerHTML +=
+                            "file not found<br><br>";
+
+                        return;
+                    }
+
+                    output.innerHTML +=
+                        `
+        ${file.content || ""}
+        <br><br>
+        `;
+
+                    return;
+
+                }
+
+                if (
+                    command === "tree"
+                ) {
+
+                    const files =
+                        await this.fs.getAllNodes(
+                            user.uid
+                        );
+
+                    output.innerHTML +=
+                        `root<br>`;
+
+                    files.forEach(
+
+                        file => {
+
+                            output.innerHTML +=
+
+                                file.type === "folder"
+
+                                ?
+
+                                ` ├ 📁 ${file.name}<br>`
+
+                                :
+
+                                ` ├ 📄 ${file.name}<br>`;
+
+                        }
+
+                    );
+
+                    output.innerHTML +=
+                        "<br>";
 
                     return;
 
