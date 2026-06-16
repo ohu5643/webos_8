@@ -8,19 +8,19 @@ import { auth } from './firebase/firebase.js';
 import Explorer from "./apps/Explorer.js";
 import Notepad from "./apps/Notepad.js";
 import AIAssistant from "./apps/AIAssistant.js";
+import Terminal from "./apps/Terminal.js";
 
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     onAuthStateChanged
-}
-from "firebase/auth";
-
-import Terminal from "./apps/Terminal.js";
+} from "firebase/auth";
 
 
-// ---------- 로그인 화면 ----------
-function renderLogin(){
+// =========================
+// LOGIN
+// =========================
+function renderLogin() {
 
     document.querySelector('#app').innerHTML = `
 
@@ -28,10 +28,7 @@ function renderLogin(){
 
         <h2>WebOS Login</h2>
 
-        <input
-            id="email"
-            placeholder="Email"
-        >
+        <input id="email" placeholder="Email">
 
         <br><br>
 
@@ -52,7 +49,6 @@ function renderLogin(){
         </button>
 
     </div>
-
     `;
 
 
@@ -61,7 +57,7 @@ function renderLogin(){
         .getElementById("register")
         .addEventListener(
             "click",
-            async ()=>{
+            async () => {
 
                 const email =
                     document.getElementById("email").value;
@@ -69,7 +65,7 @@ function renderLogin(){
                 const password =
                     document.getElementById("password").value;
 
-                try{
+                try {
 
                     await createUserWithEmailAndPassword(
                         auth,
@@ -79,9 +75,7 @@ function renderLogin(){
 
                     alert("회원가입 성공");
 
-                }
-
-                catch(error){
+                } catch (error) {
 
                     alert(error.message);
 
@@ -96,7 +90,7 @@ function renderLogin(){
         .getElementById("login")
         .addEventListener(
             "click",
-            async ()=>{
+            async () => {
 
                 const email =
                     document.getElementById("email").value;
@@ -104,7 +98,7 @@ function renderLogin(){
                 const password =
                     document.getElementById("password").value;
 
-                try{
+                try {
 
                     await signInWithEmailAndPassword(
                         auth,
@@ -112,9 +106,7 @@ function renderLogin(){
                         password
                     );
 
-                }
-
-                catch(error){
+                } catch (error) {
 
                     alert(error.message);
 
@@ -126,9 +118,10 @@ function renderLogin(){
 }
 
 
-
-// ---------- WebOS ----------
-function renderDesktop(){
+// =========================
+// DESKTOP
+// =========================
+function renderDesktop() {
 
     document.querySelector('#app').innerHTML = `
 
@@ -169,7 +162,6 @@ function renderDesktop(){
 
 
     const wm = new WindowManager();
-
     const fs = new FileSystem();
 
     const explorer =
@@ -192,7 +184,7 @@ function renderDesktop(){
             fs,
             auth
         );
-    
+
     const terminal =
         new Terminal(
             fs,
@@ -201,78 +193,223 @@ function renderDesktop(){
         );
 
 
+    // 아이콘 실행
     document
-        .getElementById(
-            "explorer-icon"
-        )
+        .getElementById("explorer-icon")
         .addEventListener(
             "dblclick",
-            ()=>{
+            () => explorer.open()
+        );
 
-                explorer.open();
+    document
+        .getElementById("notepad-icon")
+        .addEventListener(
+            "dblclick",
+            () => notepad.open()
+        );
 
-            }
+    document
+        .getElementById("ai-icon")
+        .addEventListener(
+            "dblclick",
+            () => ai.open()
+        );
+
+    document
+        .getElementById("terminal-icon")
+        .addEventListener(
+            "dblclick",
+            () => terminal.open()
         );
 
 
-    document
-        .getElementById(
-            "notepad-icon"
-        )
-        .addEventListener(
-            "dblclick",
-            ()=>{
-
-                notepad.open();
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "ai-icon"
-        )
-        .addEventListener(
-            "dblclick",
-            ()=>{
-
-                ai.open();
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "terminal-icon"
-        )
-        .addEventListener(
-            "dblclick",
-            ()=>{
-
-                terminal.open();
-
-            }
-        );
-
-
+    // 파일 시스템 초기화
     fs.initialize(
         auth.currentUser.uid
+    );
+
+
+    // =========================
+    // 우클릭 메뉴
+    // =========================
+    const desktop =
+        document.getElementById(
+            "desktop"
+        );
+
+    desktop.addEventListener(
+
+        "contextmenu",
+
+        (e) => {
+
+            e.preventDefault();
+
+            const oldMenu =
+                document.getElementById(
+                    "context-menu"
+                );
+
+            if (oldMenu)
+                oldMenu.remove();
+
+
+            const menu =
+                document.createElement(
+                    "div"
+                );
+
+            menu.id = "context-menu";
+
+            menu.innerHTML = `
+
+                <div id="desktop-new-folder">
+                    📁 새 폴더
+                </div>
+
+                <div id="desktop-new-file">
+                    📄 새 파일
+                </div>
+
+                <div id="desktop-terminal">
+                    💻 터미널
+                </div>
+
+                <div id="desktop-refresh">
+                    🔄 새로고침
+                </div>
+
+            `;
+
+            menu.style.position = "absolute";
+            menu.style.left = e.pageX + "px";
+            menu.style.top = e.pageY + "px";
+            menu.style.background = "#222";
+            menu.style.color = "white";
+            menu.style.padding = "10px";
+            menu.style.border = "1px solid gray";
+            menu.style.zIndex = "9999";
+
+            document.body.appendChild(
+                menu
+            );
+
+
+            // 새 폴더
+            document
+                .getElementById(
+                    "desktop-new-folder"
+                )
+                .onclick =
+                async () => {
+
+                    const name =
+                        prompt(
+                            "폴더 이름"
+                        );
+
+                    if (!name) return;
+
+                    await fs.createFolder(
+                        auth.currentUser.uid,
+                        name
+                    );
+
+                    menu.remove();
+
+                };
+
+
+            // 새 파일
+            document
+                .getElementById(
+                    "desktop-new-file"
+                )
+                .onclick =
+                async () => {
+
+                    const name =
+                        prompt(
+                            "파일 이름"
+                        );
+
+                    if (!name) return;
+
+                    await fs.createFile(
+                        auth.currentUser.uid,
+                        name
+                    );
+
+                    menu.remove();
+
+                };
+
+
+            // 터미널
+            document
+                .getElementById(
+                    "desktop-terminal"
+                )
+                .onclick =
+                () => {
+
+                    terminal.open();
+
+                    menu.remove();
+
+                };
+
+
+            // 새로고침
+            document
+                .getElementById(
+                    "desktop-refresh"
+                )
+                .onclick =
+                () => {
+
+                    menu.remove();
+
+                    renderDesktop();
+
+                };
+
+        }
+    );
+
+
+    // 메뉴 닫기
+    document.addEventListener(
+
+        "click",
+
+        () => {
+
+            const menu =
+                document.getElementById(
+                    "context-menu"
+                );
+
+            if (menu)
+                menu.remove();
+
+        }
+
     );
 
 }
 
 
-
-// ---------- auth 상태 ----------
+// =========================
+// APP START
+// =========================
 onAuthStateChanged(
 
     auth,
 
-    async user => {
+    (user) => {
 
-        if(user){
+        if (user) {
 
             console.log(
                 "Logged In:",
@@ -283,7 +420,7 @@ onAuthStateChanged(
 
         }
 
-        else{
+        else {
 
             renderLogin();
 
