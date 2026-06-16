@@ -240,12 +240,150 @@ export default class Explorer {
                                             .replace("📁", "")
                                             .replace("📄", "")
                                             .trim();
+// 파일 열기
+
+                            if (
+                                type === "file"
+                            ) {
+
+                                const file =
+                                    await this.fs.getFile(
+
+                                        user.uid,
+
+                                        name
+
+                                    );
 
 
-                                        // 폴더 열기
+                                const noteWin =
+                                    this.wm.createWindow(
 
-                                        if (
-                                            type === "folder"
-                                        ) {
+                                        name,
 
-                                            this.currentPath.push(name);
+                                        `
+
+                                        <textarea
+                                            id="editor"
+                                            style="
+                                                width:100%;
+                                                height:300px;
+                                            "
+                                        >${file.content || ""}</textarea>
+
+                                        <br><br>
+
+                                        <button id="save-file">
+                                            저장
+                                        </button>
+
+                                        `
+                                    );
+
+
+                                noteWin
+                                    .querySelector(
+                                        "#save-file"
+                                    )
+                                    .addEventListener(
+
+                                        "click",
+
+                                        async () => {
+
+                                            const content =
+                                                noteWin
+                                                .querySelector(
+                                                    "#editor"
+                                                )
+                                                .value;
+
+
+                                            await this.fs.saveFile(
+
+                                                user.uid,
+
+                                                name,
+
+                                                content
+
+                                            );
+
+
+                                            alert(
+                                                "저장 완료"
+                                            );
+
+                                        }
+                                    );
+
+                            }
+
+                        }
+                    );
+
+
+                    // -----------------
+                    // 우클릭 삭제
+                    // -----------------
+
+                    item.addEventListener(
+
+                        "contextmenu",
+
+                        async (e) => {
+
+                            e.preventDefault();
+
+
+                            const name =
+                                item.textContent
+                                .replace("📁", "")
+                                .replace("📄", "")
+                                .trim();
+
+
+                            const confirmDelete =
+                                confirm(
+
+                                    `${name} 삭제할까?`
+
+                                );
+
+
+                            if (
+                                !confirmDelete
+                            ) return;
+
+
+                            await this.fs.deleteNode(
+
+                                user.uid,
+
+                                name
+
+                            );
+
+
+                            alert(
+                                "삭제 완료"
+                            );
+
+
+                            win.remove();
+
+                            this.open();
+
+                        }
+
+                    );
+
+                }
+
+            );
+
+    }
+
+}
+
+                                      
