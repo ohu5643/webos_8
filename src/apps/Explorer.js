@@ -6,8 +6,14 @@ export default class Explorer {
         this.wm = wm;
         this.auth = auth;
 
-        this.currentFolder = "root";
+        this.currentPath = ["root"];
 
+    }
+
+    getCurrentFolder() {
+        return this.currentPath[
+            this.currentPath.length - 1
+        ];
     }
 
 
@@ -22,7 +28,7 @@ export default class Explorer {
         const nodes =
             await this.fs.getNodes(
                 user.uid,
-                this.currentFolder
+                this.getCurrentFolder()
             );
 
 
@@ -64,7 +70,7 @@ export default class Explorer {
                 <div>
 
                     현재 위치 :
-                    ${this.currentFolder}
+                    ${this.currentPath.join("/")}
 
                 </div>
 
@@ -122,7 +128,7 @@ export default class Explorer {
 
                         folderName,
 
-                        this.currentFolder
+                        this.getCurrentFolder()
 
                     );
 
@@ -163,7 +169,7 @@ export default class Explorer {
 
                         fileName,
 
-                        this.currentFolder
+                        this.getCurrentFolder()
 
                     );
 
