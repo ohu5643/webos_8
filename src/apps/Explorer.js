@@ -646,22 +646,100 @@ try {
     action === "2"
 ) {
 
-    const targetFolderId =
-        prompt(
-            "이동할 폴더 ID"
+    const folders =
+        (
+            await this.fs.getAllNodes(
+                user.uid
+            )
+        ).filter(
+            node =>
+                node.type ===
+                "folder"
         );
 
-    if (
-        !targetFolderId
-    ) return;
+    const moveWindow =
+        this.wm.createWindow(
 
-    await this.fs.moveNode(
-        user.uid,
-        id,
-        targetFolderId
-    );
+            "이동",
 
-    alert("이동 완료");
+            folders.map(
+                folder =>
+
+`
+<div
+class="move-folder"
+data-id="${folder.id}"
+style="
+padding:8px;
+cursor:pointer;
+border-bottom:1px solid #444;
+"
+>
+📁 ${folder.name}
+</div>
+`
+            ).join("")
+
+        );
+
+    moveWindow
+        .querySelectorAll(
+            ".move-folder"
+        )
+        .forEach(
+
+            folderItem => {
+
+                folderItem
+                    .addEventListener(
+
+                        "click",
+
+                        async () => {
+
+                            try {
+
+                                await this.fs.moveNode(
+
+                                    user.uid,
+
+                                    id,
+
+                                    folderItem.dataset.id
+
+                                );
+
+                                alert(
+                                    "이동 완료"
+                                );
+
+                                moveWindow.remove();
+
+                                win.remove();
+
+                                this.open();
+
+                            }
+
+                            catch (err) {
+
+                                console.error(
+                                    err
+                                );
+
+                                alert(
+                                    "이동 실패"
+                                );
+
+                            }
+
+                        }
+
+                    );
+
+            }
+
+        );
 
 }
 
@@ -713,4 +791,4 @@ else if (
 
     }
 
-}
+                        }
