@@ -145,7 +145,7 @@ export default class FileSystem {
 
     async getFile(
         uid,
-        fileName
+        fileId
     ) {
 
         const ref =
@@ -154,7 +154,7 @@ export default class FileSystem {
                 "users",
                 uid,
                 "filesystem",
-                fileName
+                fileId
             );
 
         const snapshot =
@@ -166,14 +166,14 @@ export default class FileSystem {
 
     async saveFile(
         uid,
-        fileName,
+        fileId,
         content
     ) {
 
         const oldFile =
             await this.getFile(
                 uid,
-                fileName
+                fileId
             );
 
         await setDoc(
@@ -182,7 +182,7 @@ export default class FileSystem {
                 "users",
                 uid,
                 "filesystem",
-                fileName
+                fileId
             ), {
                 ...oldFile,
                 content
