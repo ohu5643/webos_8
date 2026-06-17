@@ -4,7 +4,8 @@ import {
     getDoc,
     doc,
     setDoc,
-    deleteDoc
+    deleteDoc,
+    addDoc
 }
 from "firebase/firestore";
 
@@ -97,18 +98,21 @@ export default class FileSystem {
         parent = "root"
     ) {
 
-        await setDoc(
-            doc(
+        await addDoc(
+
+            collection(
                 db,
                 "users",
                 uid,
-                "filesystem",
-                folderName
-            ), {
+                "filesystem"
+            ),
+
+            {
                 name: folderName,
                 type: "folder",
                 parent
             }
+
         );
 
     }
@@ -119,19 +123,22 @@ export default class FileSystem {
         parent = "root"
     ) {
 
-        await setDoc(
-            doc(
+        await addDoc(
+
+            collection(
                 db,
                 "users",
                 uid,
-                "filesystem",
-                fileName
-            ), {
+                "filesystem"
+            ),
+
+            {
                 name: fileName,
                 type: "file",
                 parent,
                 content: ""
             }
+
         );
 
     }
