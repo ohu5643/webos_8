@@ -231,6 +231,9 @@ export default class Explorer {
 
                         async () => {
 
+                            const id =
+                                item.dataset.id;
+
                             const type =
                                 item.dataset.type;
 
@@ -239,7 +242,6 @@ export default class Explorer {
                                 .replace("📁", "")
                                 .replace("📄", "")
                                 .trim();
-
 
                             // 폴더 열기
 
@@ -267,11 +269,8 @@ export default class Explorer {
 
                                 const file =
                                     await this.fs.getFile(
-
                                         user.uid,
-
-                                        name
-
+                                        id
                                     );
 
 
@@ -319,13 +318,9 @@ export default class Explorer {
 
 
                                             await this.fs.saveFile(
-
                                                 user.uid,
-
-                                                name,
-
+                                                id,
                                                 content
-
                                             );
 
 
@@ -379,7 +374,7 @@ export default class Explorer {
 
                                 user.uid,
 
-                                name
+                                id
 
                             );
 
