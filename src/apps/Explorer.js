@@ -336,21 +336,26 @@ item.addEventListener(
 
         item.addEventListener(
 
+    "dragover",
+
+    e => {
+
+        console.log(
             "dragover",
-
-            e => {
-
-                e.preventDefault();
-
-                item.style.background =
-                    "#4a90ff";
-
-                item.style.color =
-                    "white";
-
-            }
-
+            item.dataset.id
         );
+
+        e.preventDefault();
+
+        item.style.background =
+            "#4a90ff";
+
+        item.style.color =
+            "white";
+
+    }
+
+);
 
         item.addEventListener(
 
@@ -370,24 +375,29 @@ item.addEventListener(
 
         item.addEventListener(
 
-            "drop",
+    "drop",
 
-            async e => {
+    async e => {
 
-                e.preventDefault();
+        console.log(
+            "DROP EVENT"
+        );
 
-                item.style.background =
-                    "";
+        e.preventDefault();
+        e.stopPropagation();
 
-                item.style.color =
-                    "";
+        item.style.background =
+            "";
 
-                if (
-                    draggedId ===
-                    item.dataset.id
-                ) return;
+        item.style.color =
+            "";
 
-                try {
+        if (
+            draggedId ===
+            item.dataset.id
+        ) return;
+
+        try {
 
                     console.log(
     "drop",
@@ -703,4 +713,4 @@ else if (
 
     }
 
-                    }
+}
