@@ -10,7 +10,16 @@ export default class Terminal {
         this.wm = wm;
         this.auth = auth;
 
-        this.currentPath = ["root"];
+        this.currentFolderStack = [null];
+        this.currentFolderNames = ["root"];
+
+    }
+
+    getCurrentFolder() {
+
+        return this.currentFolderStack[
+            this.currentFolderStack.length - 1
+        ];
 
     }
 
@@ -136,7 +145,7 @@ clear<br><br>
                         await this.fs.getNodes(
                             user.uid,
 
-                            this.currentFolder
+                            this.getCurrentFolder()
                         );
 
 
@@ -185,7 +194,7 @@ clear<br><br>
                     await this.fs.createFolder(
                         user.uid,
                         folderName,
-                        this.currentFolder
+                        this.getCurrentFolder()
                     );
 
 
@@ -216,7 +225,7 @@ clear<br><br>
                     await this.fs.createFile(
                         user.uid,
                         fileName,
-                        this.currentFolder
+                        this.getCurrentFolder()
                     );
 
 
@@ -245,7 +254,7 @@ clear<br><br>
                     const files =
                         await this.fs.getNodes(
                             user.uid,
-                            this.currentFolder
+                            this.getCurrentFolder()
                         );
 
                     const target =
@@ -284,7 +293,7 @@ clear<br><br>
                 ) {
 
                     output.innerHTML +=
-                        `${this.currentFolder}<br><br>`;
+                        `${this.currentFolderNames.join("/")}<br><br>`;
 
                     return;
 
@@ -304,40 +313,36 @@ clear<br><br>
 
                     if (folderName === "..") {
 
-                        this.currentFolder =
-                            "root";
+                        if (
+                            this.currentFolderStack.length > 1
+                        ) {
+
+                            this.currentFolderStack.pop();
+                            this.currentFolderNames.pop();
+
+                        }
 
                         output.innerHTML +=
-                            "back to root<br><br>";
+                            "directory changed<br><br>";
 
                         return;
-                    }
 
+                    }
 
                     const files =
                         await this.fs.getNodes(
-
                             user.uid,
-
-                            this.currentFolder
-
+                            this.getCurrentFolder()
                         );
-
 
                     const target =
                         files.find(
-
                             file =>
-
                             file.name === folderName &&
                             file.type === "folder"
-
                         );
 
-
-                    if (
-                        !target
-                    ) {
+                    if (!target) {
 
                         output.innerHTML +=
                             "folder not found<br><br>";
@@ -346,10 +351,13 @@ clear<br><br>
 
                     }
 
+                    this.currentFolderStack.push(
+                        target.id
+                    );
 
-                    this.currentFolder =
-                        folderName;
-
+                    this.currentFolderNames.push(
+                        target.name
+                    );
 
                     output.innerHTML +=
                         "directory changed<br><br>";
@@ -357,7 +365,6 @@ clear<br><br>
                     return;
 
                 }
-
                 if (
                     command === "whoami"
                 ) {
@@ -416,25 +423,39 @@ clear<br><br>
                             ""
                         );
 
-                    const file =
-                        await this.fs.getFile(
+                    const files =
+                        await this.fs.getNodes(
                             user.uid,
-                            fileName
+                            this.getCurrentFolder()
                         );
 
-                    if (!file) {
+                    const target =
+                        files.find(
+                            file =>
+                            file.name === fileName &&
+                            file.type === "file"
+                        );
+
+                    if (!target) {
 
                         output.innerHTML +=
                             "file not found<br><br>";
 
                         return;
+
                     }
+
+                    const file =
+                        await this.fs.getFile(
+                            user.uid,
+                            target.id
+                        );
 
                     output.innerHTML +=
                         `
-        ${file.content || ""}
-        <br><br>
-        `;
+${file.content || ""}
+<br><br>
+`;
 
                     return;
 
