@@ -6,7 +6,7 @@ export default class Explorer {
         this.wm = wm;
         this.auth = auth;
 
-        this.currentPath = ["root"];
+        this.currentPath = [null];
 
     }
 
@@ -36,29 +36,28 @@ export default class Explorer {
             nodes.map(
                 node => `
 
-                <div
-                    class="file-item"
-                    data-id="${node.id}"
-                    data-type="${node.type}"
-                    style="
-                        padding:8px;
-                        cursor:pointer;
-                    "
-                >
+        <div
+            class="file-item"
+            data-id="${node.id}"
+            data-type="${node.type}"
+            style="
+                padding:8px;
+                cursor:pointer;
+            "
+        >
 
-                    ${
-                        node.type === "folder"
-                        ? "📁"
-                        : "📄"
-                    }
+            ${
+                node.type === "folder"
+                ? "📁"
+                : "📄"
+            }
 
-                    ${node.name}
+            ${node.name}
 
-                </div>
+        </div>
 
-                `
+        `
             ).join("");
-
 
         const win =
             this.wm.createWindow(
@@ -67,36 +66,36 @@ export default class Explorer {
 
                 `
 
-                <div>
+        <div>
 
-                    현재 위치 :
-                    ${this.currentPath.join("/")}
+            현재 위치 :
+            ${this.currentPath.length - 1} 단계
 
-                </div>
+        </div>
 
-                <button id="back-folder">
-                    ← 뒤로
-                </button>
+        <button id="back-folder">
+            ← 뒤로
+        </button>
 
-                <br><br>
+        <br><br>
 
-                <button id="new-folder">
-                    새 폴더
-                </button>
+        <button id="new-folder">
+            새 폴더
+        </button>
 
-                <button id="new-file">
-                    새 파일
-                </button>
+        <button id="new-file">
+            새 파일
+        </button>
 
-                <hr>
+        <hr>
 
-                <div id="folder-list">
+        <div id="folder-list">
 
-                    ${html}
+            ${html}
 
-                </div>
+        </div>
 
-                `
+        `
             );
 
 
@@ -249,9 +248,7 @@ export default class Explorer {
                                 type === "folder"
                             ) {
 
-                                this.currentPath.push(
-                                    name
-                                );
+                                this.currentPath.push(id);
 
                                 win.remove();
 
@@ -281,23 +278,22 @@ export default class Explorer {
 
                                         `
 
-                                        <textarea
-                                            id="editor"
-                                            style="
-                                                width:100%;
-                                                height:300px;
-                                            "
-                                        >${file.content || ""}</textarea>
+<textarea
+id="editor"
+style="
+width:100%;
+height:300px;
+"
+>${file.content || ""}</textarea>
 
-                                        <br><br>
+<br><br>
 
-                                        <button id="save-file">
-                                            저장
-                                        </button>
+<button id="save-file">
+저장
+</button>
 
-                                        `
+`
                                     );
-
 
                                 noteWin
                                     .querySelector(
@@ -333,8 +329,7 @@ export default class Explorer {
 
                             }
 
-                        }
-                    );
+                        });
 
 
                     // -----------------
@@ -349,6 +344,8 @@ export default class Explorer {
 
                             e.preventDefault();
 
+                            const id =
+                                item.dataset.id;
 
                             const name =
                                 item.textContent
@@ -359,9 +356,7 @@ export default class Explorer {
 
                             const confirmDelete =
                                 confirm(
-
                                     `${name} 삭제할까?`
-
                                 );
 
 
