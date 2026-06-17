@@ -121,7 +121,7 @@ function renderLogin() {
 // =========================
 // DESKTOP
 // =========================
-function renderDesktop() {
+async function renderDesktop() {
 
     document.querySelector('#app').innerHTML = `
 
@@ -224,7 +224,7 @@ function renderDesktop() {
 
 
     // 파일 시스템 초기화
-    fs.initialize(
+    await fs.initialize(
         auth.currentUser.uid
     );
 
