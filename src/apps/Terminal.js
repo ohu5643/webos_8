@@ -10,7 +10,7 @@ export default class Terminal {
         this.wm = wm;
         this.auth = auth;
 
-        this.currentFolder = "root";
+        this.currentPath = ["root"];
 
     }
 
