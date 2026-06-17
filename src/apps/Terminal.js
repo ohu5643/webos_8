@@ -470,28 +470,73 @@ ${file.content || ""}
                             user.uid
                         );
 
+                    const buildTree = (
+                        parentId,
+                        prefix = ""
+                    ) => {
+
+                        let result = "";
+
+                        const children =
+                            files.filter(
+                                file =>
+                                file.parentId === parentId
+                            );
+
+                        children.forEach(
+                            (
+                                file,
+                                index
+                            ) => {
+
+                                const isLast =
+                                    index ===
+                                    children.length - 1;
+
+                                const connector =
+                                    isLast ?
+                                    "└ " :
+                                    "├ ";
+
+                                result +=
+
+                                    `${prefix}${connector}${
+                        file.type === "folder"
+                        ? "📁"
+                        : "📄"
+                    } ${file.name}<br>`;
+
+                                if (
+                                    file.type === "folder"
+                                ) {
+
+                                    result += buildTree(
+
+                                        file.id,
+
+                                        prefix +
+                                        (
+                                            isLast ?
+                                            "&nbsp;&nbsp;&nbsp;" :
+                                            "│&nbsp;&nbsp;"
+                                        )
+
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                        return result;
+
+                    };
+
                     output.innerHTML +=
-                        `root<br>`;
+                        "root<br>";
 
-                    files.forEach(
-
-                        file => {
-
-                            output.innerHTML +=
-
-                                file.type === "folder"
-
-                                ?
-
-                                ` ├ 📁 ${file.name}<br>`
-
-                                :
-
-                                ` ├ 📄 ${file.name}<br>`;
-
-                        }
-
-                    );
+                    output.innerHTML +=
+                        buildTree(null);
 
                     output.innerHTML +=
                         "<br>";
