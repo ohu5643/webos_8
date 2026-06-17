@@ -19,22 +19,22 @@ export default class Explorer {
 
     async open() {
 
-            const user =
-                this.auth.currentUser;
+        const user =
+            this.auth.currentUser;
 
-            if (!user) return;
-
-
-            const nodes =
-                await this.fs.getNodes(
-                    user.uid,
-                    this.getCurrentFolder()
-                );
+        if (!user) return;
 
 
-            const html =
-                nodes.map(
-                    node => `
+        const nodes =
+            await this.fs.getNodes(
+                user.uid,
+                this.getCurrentFolder()
+            );
+
+
+        const html =
+            nodes.map(
+                node => `
 
                 <div
                     class="file-item"
@@ -57,15 +57,15 @@ export default class Explorer {
                 </div>
 
                 `
-                ).join("");
+            ).join("");
 
 
-            const win =
-                this.wm.createWindow(
+        const win =
+            this.wm.createWindow(
 
-                    "Explorer",
+                "Explorer",
 
-                    `
+                `
 
                 <div>
 
@@ -97,150 +97,169 @@ export default class Explorer {
                 </div>
 
                 `
-                );
+            );
 
 
-            // =====================
-            // 새 폴더
-            // =====================
+        // =====================
+        // 새 폴더
+        // =====================
 
-            win
-                .querySelector(
-                    "#new-folder"
-                )
-                .addEventListener(
+        win
+            .querySelector(
+                "#new-folder"
+            )
+            .addEventListener(
 
-                    "click",
+                "click",
 
-                    async () => {
+                async () => {
 
-                        const folderName =
-                            prompt(
-                                "폴더 이름"
-                            );
-
-                        if (!folderName) return;
-
-
-                        await this.fs.createFolder(
-
-                            user.uid,
-
-                            folderName,
-
-                            this.getCurrentFolder()
-
+                    const folderName =
+                        prompt(
+                            "폴더 이름"
                         );
 
-
-                        win.remove();
-
-                        this.open();
-
-                    }
-                );
+                    if (!folderName) return;
 
 
-            // =====================
-            // 새 파일
-            // =====================
+                    await this.fs.createFolder(
 
-            win
-                .querySelector(
-                    "#new-file"
-                )
-                .addEventListener(
+                        user.uid,
 
-                    "click",
+                        folderName,
 
-                    async () => {
+                        this.getCurrentFolder()
 
-                        const fileName =
-                            prompt(
-                                "파일 이름"
-                            );
-
-                        if (!fileName) return;
+                    );
 
 
-                        await this.fs.createFile(
+                    win.remove();
 
-                            user.uid,
+                    this.open();
 
-                            fileName,
+                }
+            );
 
-                            this.getCurrentFolder()
 
+        // =====================
+        // 새 파일
+        // =====================
+
+        win
+            .querySelector(
+                "#new-file"
+            )
+            .addEventListener(
+
+                "click",
+
+                async () => {
+
+                    const fileName =
+                        prompt(
+                            "파일 이름"
                         );
 
+                    if (!fileName) return;
 
-                        win.remove();
 
-                        this.open();
+                    await this.fs.createFile(
 
+                        user.uid,
+
+                        fileName,
+
+                        this.getCurrentFolder()
+
+                    );
+
+
+                    win.remove();
+
+                    this.open();
+
+                }
+            );
+
+
+        // =====================
+        // 뒤로가기
+        // =====================
+
+        win
+            .querySelector(
+                "#back-folder"
+            )
+            .addEventListener(
+
+                "click",
+
+                () => {
+
+                    if (
+                        this.currentPath.length > 1
+                    ) {
+                        this.currentPath.pop();
                     }
-                );
+
+                    win.remove();
+
+                    this.open();
+
+                }
+            );
+
+        // =====================
+        // 파일/폴더 이벤트
+        // =====================
+
+        win
+            .querySelectorAll(
+                ".file-item"
+            )
+            .forEach(
+
+                item => {
+
+                    // -----------------
+                    // 더블클릭
+                    // -----------------
+
+                    item.addEventListener(
+
+                        "dblclick",
+
+                        async () => {
+
+                            const type =
+                                item.dataset.type;
+
+                            const name =
+                                item.textContent
+                                .replace("📁", "")
+                                .replace("📄", "")
+                                .trim();
 
 
-            // =====================
-            // 뒤로가기
-            // =====================
+                            // 폴더 열기
 
-            win
-                .querySelector(
-                    "#back-folder"
-                )
-                .addEventListener(
+                            if (
+                                type === "folder"
+                            ) {
 
-                    "click",
+                                this.currentPath.push(
+                                    name
+                                );
 
-                    () => {
+                                win.remove();
 
-                        if (
-                            this.currentPath.length > 1
-                        ) {
-                            this.currentPath.pop();
-                        }
+                                this.open();
 
-                        win.remove();
+                                return;
 
-                        this.open();
+                            }
 
-                    }
-                );
-
-
-            // =====================
-            // 파일/폴더 이벤트
-            // =====================
-
-            win
-                .querySelectorAll(
-                    ".file-item"
-                )
-                .forEach(
-
-                    item => {
-
-                        // -----------------
-                        // 더블클릭
-                        // -----------------
-
-                        item.addEventListener(
-
-                                "dblclick",
-
-                                async () => {
-
-                                        const type =
-                                            item.dataset.type;
-
-                                        const name =
-                                            item.textContent
-                                            .replace("📁", "")
-                                            .replace("📄", "")
-                                            .trim();
-// 파일 열기
+                            // 파일 열기
 
                             if (
                                 type === "file"
@@ -385,5 +404,3 @@ export default class Explorer {
     }
 
 }
-
-                                      
