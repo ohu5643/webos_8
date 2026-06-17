@@ -301,4 +301,43 @@ export default class FileSystem {
 
     }
 
-}
+    async moveNode(
+        uid,
+        nodeId,
+        newParentId
+    ) {
+
+        const ref =
+            doc(
+                db,
+                "users",
+                uid,
+                "filesystem",
+                nodeId
+            );
+
+        const snapshot =
+            await getDoc(ref);
+
+        if (!snapshot.exists()) {
+
+            throw new Error(
+                "Node not found"
+            );
+
+        }
+
+        const oldData =
+            snapshot.data();
+
+        await setDoc(
+            ref,
+            {
+                ...oldData,
+                parentId: newParentId
+            }
+        );
+
+    }
+
+            }
