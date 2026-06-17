@@ -40,20 +40,22 @@ export default class FileSystem {
 
         for (const folder of defaults) {
 
-            await setDoc(
-                doc(
+            await addDoc(
+
+                collection(
                     db,
                     "users",
                     uid,
-                    "filesystem",
-                    folder
-                ), {
+                    "filesystem"
+                ),
+
+                {
                     name: folder,
                     type: "folder",
-                    parent: "root"
+                    parentId: null
                 }
-            );
 
+            );
         }
 
         console.log(
@@ -64,7 +66,7 @@ export default class FileSystem {
 
     async getNodes(
         uid,
-        parent = "root"
+        parentId = null
     ) {
 
         const ref =
@@ -87,7 +89,7 @@ export default class FileSystem {
             )
             .filter(
                 node =>
-                node.parent === parent
+                node.parentId === parentId
             );
 
     }
@@ -95,7 +97,7 @@ export default class FileSystem {
     async createFolder(
         uid,
         folderName,
-        parent = "root"
+        parentId = null
     ) {
 
         await addDoc(
@@ -110,7 +112,7 @@ export default class FileSystem {
             {
                 name: folderName,
                 type: "folder",
-                parent
+                parentId
             }
 
         );
@@ -120,7 +122,7 @@ export default class FileSystem {
     async createFile(
         uid,
         fileName,
-        parent = "root"
+        parentId = null
     ) {
 
         await addDoc(
@@ -135,7 +137,7 @@ export default class FileSystem {
             {
                 name: fileName,
                 type: "file",
-                parent,
+                parentId,
                 content: ""
             }
 
@@ -211,7 +213,7 @@ export default class FileSystem {
 
                 uid,
 
-                node.name
+                node.id
 
             );
 
