@@ -12,10 +12,10 @@ export default class Explorer {
     }
 
     getCurrentFolder() {
-        return this.currentFolderStack[
-            this.currentFolderStack.length - 1
-        ];
-    }
+    return this.currentFolderStack[
+        this.currentFolderStack.length - 1
+    ];
+}
 
 
     async open() {
@@ -96,11 +96,11 @@ export default class Explorer {
             }).join("");
 
         const win =
-            this.wm.createWindow(
+    this.wm.createWindow(
 
-                "Explorer",
+        "Explorer",
 
-                `
+        `
 
         <div>
 
@@ -132,6 +132,10 @@ ${this.currentFolderNames.join("/")}
 
         `
             );
+            
+console.log(
+    win.querySelectorAll(".file-item")
+);
 
 
         // =====================
@@ -289,16 +293,41 @@ win
 
     item.addEventListener(
 
-        "dragstart",
+    "dragstart",
 
-        () => {
+    e => {
 
-            draggedId =
-                item.dataset.id;
+        draggedId =
+    item.dataset.id;
 
-        }
+console.log(
+    "drag start",
+    draggedId
+);
+        e.dataTransfer.setData(
+            "text/plain",
+            draggedId
+        );
 
-    );
+        item.style.opacity =
+            "0.5";
+
+    }
+
+);
+
+item.addEventListener(
+
+    "dragend",
+
+    () => {
+
+        item.style.opacity =
+            "1";
+
+    }
+
+);
 
     if (
         item.dataset.type ===
@@ -360,7 +389,13 @@ win
 
                 try {
 
-                    await this.fs.moveNode(
+                    console.log(
+    "drop",
+    draggedId,
+    item.dataset.id
+);
+
+await this.fs.moveNode(
 
                         user.uid,
 
@@ -598,27 +633,52 @@ try {
     }
 
     else if (
-        action === "2"
-    ) {
+    action === "2"
+) {
 
-        const confirmDelete =
-            confirm(
-                `${name} 삭제할까?`
-            );
-
-        if (
-            !confirmDelete
-        ) return;
-
-        await this.fs.deleteNode(
-            user.uid,
-            id
+    const targetFolderId =
+        prompt(
+            "이동할 폴더 ID"
         );
 
-        alert("삭제 완료");
+    if (
+        !targetFolderId
+    ) return;
 
-    }
+    await this.fs.moveNode(
+        user.uid,
+        id,
+        targetFolderId
+    );
 
+    alert("이동 완료");
+
+}
+
+else if (
+    action === "3"
+) {
+
+    const confirmDelete =
+        confirm(
+            `${name} 삭제할까?`
+        );
+
+    if (
+        !confirmDelete
+    ) return;
+
+    await this.fs.deleteNode(
+        user.uid,
+        id
+    );
+
+    alert("삭제 완료");
+
+}
+
+    
+    
     win.remove();
 
     this.open();
@@ -643,4 +703,4 @@ try {
 
     }
 
-                                    }
+                    }
