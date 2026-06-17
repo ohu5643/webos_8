@@ -6,13 +6,14 @@ export default class Explorer {
         this.wm = wm;
         this.auth = auth;
 
-        this.currentPath = [null];
+        this.currentFolderStack = [null];
+        this.currentFolderNames = ["root"];
 
     }
 
     getCurrentFolder() {
-        return this.currentPath[
-            this.currentPath.length - 1
+        return this.currentFolderStack[
+            this.currentFolderStack.length - 1
         ];
     }
 
@@ -25,39 +26,69 @@ export default class Explorer {
         if (!user) return;
 
 
-        const nodes =
-            await this.fs.getNodes(
-                user.uid,
-                this.getCurrentFolder()
-            );
+        let nodes = [];
+
+        try {
+
+            nodes =
+                await this.fs.getNodes(
+                    user.uid,
+                    this.getCurrentFolder()
+                );
+
+        } catch (err) {
+
+            console.error(err);
+            alert("폴더 불러오기 실패");
+            return;
+        }
 
 
         const html =
-            nodes.map(
-                node => `
 
-        <div
-            class="file-item"
-            data-id="${node.id}"
-            data-type="${node.type}"
-            style="
-                padding:8px;
-                cursor:pointer;
-            "
-        >
+            nodes.length === 0
 
-            ${
-                node.type === "folder"
-                ? "📁"
-                : "📄"
-            }
+            ?
 
-            ${node.name}
+            `<div>폴더가 비어있습니다.</div>`
 
-        </div>
+            :
 
-        `
-            ).join("");
+            nodes.map(node => {
+
+                const safeName =
+                    node.name
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+
+                return `
+
+<div
+    class="file-item"
+    data-id="${node.id}"
+    data-type="${node.type}"
+    style="
+        padding:8px;
+        cursor:pointer;
+    "
+>
+
+    ${
+        node.type === "folder"
+        ? "📁"
+        : "📄"
+    }
+
+    ${safeName}
+
+</div>
+
+`;
+
+            }).join("");
 
         const win =
             this.wm.createWindow(
@@ -69,8 +100,7 @@ export default class Explorer {
         <div>
 
             현재 위치 :
-            ${this.currentPath.length - 1} 단계
-
+${this.currentFolderNames.join("/")}
         </div>
 
         <button id="back-folder">
@@ -118,19 +148,32 @@ export default class Explorer {
                             "폴더 이름"
                         );
 
-                    if (!folderName) return;
+                    if (!folderName || !folderName.trim()) {
+                        alert("이름을 입력하세요");
+                        return;
+                    }
 
 
-                    await this.fs.createFolder(
+                    try {
 
-                        user.uid,
+                        await this.fs.createFolder(
 
-                        folderName,
+                            user.uid,
 
-                        this.getCurrentFolder()
+                            folderName.trim(),
 
-                    );
+                            this.getCurrentFolder()
 
+                        );
+
+                    } catch (err) {
+
+                        console.error(err);
+
+                        alert(err.message);
+
+                        return;
+                    }
 
                     win.remove();
 
@@ -159,19 +202,32 @@ export default class Explorer {
                             "파일 이름"
                         );
 
-                    if (!fileName) return;
+                    if (!fileName || !fileName.trim()) {
+                        alert("이름을 입력하세요");
+                        return;
+                    }
 
 
-                    await this.fs.createFile(
+                    try {
 
-                        user.uid,
+                        await this.fs.createFile(
 
-                        fileName,
+                            user.uid,
 
-                        this.getCurrentFolder()
+                            fileName.trim(),
 
-                    );
+                            this.getCurrentFolder()
 
+                        );
+
+                    } catch (err) {
+
+                        console.error(err);
+
+                        alert(err.message);
+
+                        return;
+                    }
 
                     win.remove();
 
@@ -196,13 +252,17 @@ export default class Explorer {
                 () => {
 
                     if (
-                        this.currentPath.length > 1
+                        this.currentFolderStack.length <= 1
                     ) {
-                        this.currentPath.pop();
+
+                        alert("최상위 폴더입니다.");
+                        return;
                     }
 
-                    win.remove();
+                    this.currentFolderStack.pop();
+                    this.currentFolderNames.pop();
 
+                    win.remove();
                     this.open();
 
                 }
@@ -242,20 +302,20 @@ export default class Explorer {
                                 .replace("📄", "")
                                 .trim();
 
+
                             // 폴더 열기
 
-                            if (
-                                type === "folder"
-                            ) {
+                            if (type === "folder") {
 
-                                this.currentPath.push(id);
+                                this.currentFolderStack.push(id);
+
+                                this.currentFolderNames.push(name);
 
                                 win.remove();
 
                                 this.open();
 
                                 return;
-
                             }
 
                             // 파일 열기
@@ -264,12 +324,34 @@ export default class Explorer {
                                 type === "file"
                             ) {
 
-                                const file =
-                                    await this.fs.getFile(
-                                        user.uid,
-                                        id
-                                    );
+                                let file;
 
+                                try {
+
+                                    file =
+                                        await this.fs.getFile(
+                                            user.uid,
+                                            id
+                                        );
+
+                                } catch (err) {
+
+                                    console.error(err);
+
+                                    alert("파일 열기 실패");
+
+                                    return;
+                                }
+
+
+                                const content =
+                                    (file.content || "")
+                                    .replace(/&/g, "&amp;")
+                                    .replace(/</g, "&lt;")
+                                    .replace(/>/g, "&gt;")
+                                    .replace(/"/g, "&quot;")
+                                    .replace(/'/g, "&#39;")
+                                    .replace(/<\/textarea>/gi, "&lt;/textarea&gt;");
 
                                 const noteWin =
                                     this.wm.createWindow(
@@ -284,7 +366,7 @@ style="
 width:100%;
 height:300px;
 "
->${file.content || ""}</textarea>
+>${content}</textarea>
 
 <br><br>
 
@@ -293,7 +375,9 @@ height:300px;
 </button>
 
 `
+
                                     );
+
 
                                 noteWin
                                     .querySelector(
@@ -313,16 +397,28 @@ height:300px;
                                                 .value;
 
 
-                                            await this.fs.saveFile(
-                                                user.uid,
-                                                id,
-                                                content
-                                            );
+                                            try {
+
+                                                await this.fs.saveFile(
+                                                    user.uid,
+                                                    id,
+                                                    content
+                                                );
+
+                                                alert("저장 완료");
 
 
-                                            alert(
-                                                "저장 완료"
-                                            );
+
+
+                                            } catch (err) {
+
+                                                console.error(err);
+
+                                                alert(
+                                                    "저장 실패"
+                                                );
+
+                                            }
 
                                         }
                                     );
@@ -365,23 +461,26 @@ height:300px;
                             ) return;
 
 
-                            await this.fs.deleteNode(
+                            try {
 
-                                user.uid,
+                                await this.fs.deleteNode(
+                                    user.uid,
+                                    id
+                                );
 
-                                id
+                                alert("삭제 완료");
 
-                            );
+                                win.remove();
 
+                                this.open();
 
-                            alert(
-                                "삭제 완료"
-                            );
+                            } catch (err) {
 
+                                console.error(err);
 
-                            win.remove();
+                                alert("삭제 실패");
 
-                            this.open();
+                            }
 
                         }
 
