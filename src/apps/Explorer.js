@@ -450,39 +450,77 @@ height:300px;
                                 .trim();
 
 
-                            const confirmDelete =
-                                confirm(
-                                    `${name} 삭제할까?`
-                                );
+                            const action =
+    prompt(
+        `${name}
 
+1 = 이름 변경
+2 = 삭제`
+    );
 
-                            if (
-                                !confirmDelete
-                            ) return;
+if (!action) return;
 
+try {
 
-                            try {
+    if (action === "1") {
 
-                                await this.fs.deleteNode(
-                                    user.uid,
-                                    id
-                                );
+        const newName =
+            prompt(
+                "새 이름"
+            );
 
-                                alert("삭제 완료");
+        if (
+            !newName ||
+            !newName.trim()
+        ) return;
 
-                                win.remove();
+        await this.fs.renameNode(
+            user.uid,
+            id,
+            newName.trim()
+        );
 
-                                this.open();
+        alert("이름 변경 완료");
 
-                            } catch (err) {
+    }
 
-                                console.error(err);
+    else if (
+        action === "2"
+    ) {
 
-                                alert("삭제 실패");
+        const confirmDelete =
+            confirm(
+                `${name} 삭제할까?`
+            );
 
-                            }
+        if (
+            !confirmDelete
+        ) return;
 
-                        }
+        await this.fs.deleteNode(
+            user.uid,
+            id
+        );
+
+        alert("삭제 완료");
+
+    }
+
+    win.remove();
+
+    this.open();
+
+} catch (err) {
+
+    console.error(err);
+
+    alert(
+        "작업 실패"
+    );
+
+}
+
+}
 
                     );
 
