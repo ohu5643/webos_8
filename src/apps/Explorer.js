@@ -70,9 +70,14 @@ export default class Explorer {
     class="file-item"
     data-id="${node.id}"
     data-type="${node.type}"
+
+    draggable="true"
+
     style="
         padding:8px;
         cursor:pointer;
+        border-radius:6px;
+        transition:.2s;
     "
 >
 
@@ -272,21 +277,128 @@ ${this.currentFolderNames.join("/")}
         // 파일/폴더 이벤트
         // =====================
 
-        win
-            .querySelectorAll(
-                ".file-item"
-            )
-            .forEach(
+        let draggedId = null;
 
-                item => {
+win
+    .querySelectorAll(
+        ".file-item"
+    )
+    .forEach(
 
-                    // -----------------
-                    // 더블클릭
-                    // -----------------
+        item => {
 
-                    item.addEventListener(
+    item.addEventListener(
 
-                        "dblclick",
+        "dragstart",
+
+        () => {
+
+            draggedId =
+                item.dataset.id;
+
+        }
+
+    );
+
+    if (
+        item.dataset.type ===
+        "folder"
+    ) {
+
+        item.addEventListener(
+
+            "dragover",
+
+            e => {
+
+                e.preventDefault();
+
+                item.style.background =
+                    "#4a90ff";
+
+                item.style.color =
+                    "white";
+
+            }
+
+        );
+
+        item.addEventListener(
+
+            "dragleave",
+
+            () => {
+
+                item.style.background =
+                    "";
+
+                item.style.color =
+                    "";
+
+            }
+
+        );
+
+        item.addEventListener(
+
+            "drop",
+
+            async e => {
+
+                e.preventDefault();
+
+                item.style.background =
+                    "";
+
+                item.style.color =
+                    "";
+
+                if (
+                    draggedId ===
+                    item.dataset.id
+                ) return;
+
+                try {
+
+                    await this.fs.moveNode(
+
+                        user.uid,
+
+                        draggedId,
+
+                        item.dataset.id
+
+                    );
+
+                    win.remove();
+
+                    this.open();
+
+                }
+
+                catch (err) {
+
+                    console.error(err);
+
+                    alert(
+                        "이동 실패"
+                    );
+
+                }
+
+            }
+
+        );
+
+    }
+
+    // -----------------
+    // 더블클릭
+    // -----------------
+
+    item.addEventListener(
+
+        "dblclick",
 
                         async () => {
 
@@ -530,4 +642,4 @@ try {
 
     }
 
-}
+                                        }
