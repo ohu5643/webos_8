@@ -262,4 +262,43 @@ export default class FileSystem {
 
     }
 
+    async renameNode(
+        uid,
+        nodeId,
+        newName
+    ) {
+
+        const ref =
+            doc(
+                db,
+                "users",
+                uid,
+                "filesystem",
+                nodeId
+            );
+
+        const snapshot =
+            await getDoc(ref);
+
+        if (!snapshot.exists()) {
+
+            throw new Error(
+                "Node not found"
+            );
+
+        }
+
+        const oldData =
+            snapshot.data();
+
+        await setDoc(
+            ref,
+            {
+                ...oldData,
+                name: newName
+            }
+        );
+
+    }
+
 }
