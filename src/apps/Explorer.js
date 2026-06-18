@@ -12,10 +12,10 @@ export default class Explorer {
     }
 
     getCurrentFolder() {
-    return this.currentFolderStack[
-        this.currentFolderStack.length - 1
-    ];
-}
+        return this.currentFolderStack[
+            this.currentFolderStack.length - 1
+        ];
+    }
 
 
     async open() {
@@ -96,11 +96,11 @@ export default class Explorer {
             }).join("");
 
         const win =
-    this.wm.createWindow(
+            this.wm.createWindow(
 
-        "Explorer",
+                "Explorer",
 
-        `
+                `
 
         <div>
 
@@ -132,10 +132,10 @@ ${this.currentFolderNames.join("/")}
 
         `
             );
-            
-console.log(
-    win.querySelectorAll(".file-item")
-);
+
+        console.log(
+            win.querySelectorAll(".file-item")
+        );
 
 
         // =====================
@@ -283,167 +283,165 @@ console.log(
 
         let draggedId = null;
 
-win
-    .querySelectorAll(
-        ".file-item"
-    )
-    .forEach(
+        win
+            .querySelectorAll(
+                ".file-item"
+            )
+            .forEach(
 
-        item => {
+                item => {
 
-    item.addEventListener(
+                    item.addEventListener(
 
-    "dragstart",
+                        "dragstart",
 
-    e => {
+                        e => {
 
-        draggedId =
-    item.dataset.id;
+                            draggedId =
+                                item.dataset.id;
 
-console.log(
-    "drag start",
-    draggedId
-);
-        e.dataTransfer.setData(
-            "text/plain",
-            draggedId
-        );
+                            console.log(
+                                "drag start",
+                                draggedId
+                            );
+                            e.dataTransfer.setData(
+                                "text/plain",
+                                draggedId
+                            );
 
-        item.style.opacity =
-            "0.5";
+                            item.style.opacity =
+                                "0.5";
 
-    }
-
-);
-
-item.addEventListener(
-
-    "dragend",
-
-    () => {
-
-        item.style.opacity =
-            "1";
-
-    }
-
-);
-
-    if (
-        item.dataset.type ===
-        "folder"
-    ) {
-
-        item.addEventListener(
-
-    "dragover",
-
-    e => {
-
-        console.log(
-            "dragover",
-            item.dataset.id
-        );
-
-        e.preventDefault();
-
-        item.style.background =
-            "#4a90ff";
-
-        item.style.color =
-            "white";
-
-    }
-
-);
-
-        item.addEventListener(
-
-            "dragleave",
-
-            () => {
-
-                item.style.background =
-                    "";
-
-                item.style.color =
-                    "";
-
-            }
-
-        );
-
-        item.addEventListener(
-
-    "drop",
-
-    async e => {
-
-        console.log(
-            "DROP EVENT"
-        );
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        item.style.background =
-            "";
-
-        item.style.color =
-            "";
-
-        if (
-            draggedId ===
-            item.dataset.id
-        ) return;
-
-        try {
-
-                    console.log(
-    "drop",
-    draggedId,
-    item.dataset.id
-);
-
-await this.fs.moveNode(
-
-                        user.uid,
-
-                        draggedId,
-
-                        item.dataset.id
+                        }
 
                     );
 
-                    win.remove();
+                    item.addEventListener(
 
-                    this.open();
+                        "dragend",
 
-                }
+                        () => {
 
-                catch (err) {
+                            item.style.opacity =
+                                "1";
 
-                    console.error(err);
+                        }
 
-                    alert(
-                        "이동 실패"
                     );
 
-                }
+                    if (
+                        item.dataset.type ===
+                        "folder"
+                    ) {
 
-            }
+                        item.addEventListener(
 
-        );
+                            "dragover",
 
-    }
+                            e => {
 
-    // -----------------
-    // 더블클릭
-    // -----------------
+                                console.log(
+                                    "dragover",
+                                    item.dataset.id
+                                );
 
-    item.addEventListener(
+                                e.preventDefault();
 
-        "dblclick",
+                                item.style.background =
+                                    "#4a90ff";
+
+                                item.style.color =
+                                    "white";
+
+                            }
+
+                        );
+
+                        item.addEventListener(
+
+                            "dragleave",
+
+                            () => {
+
+                                item.style.background =
+                                    "";
+
+                                item.style.color =
+                                    "";
+
+                            }
+
+                        );
+
+                        item.addEventListener(
+
+                            "drop",
+
+                            async e => {
+
+                                console.log(
+                                    "DROP EVENT"
+                                );
+
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                item.style.background =
+                                    "";
+
+                                item.style.color =
+                                    "";
+
+                                if (
+                                    draggedId ===
+                                    item.dataset.id
+                                ) return;
+
+                                try {
+
+                                    console.log(
+                                        "drop",
+                                        draggedId,
+                                        item.dataset.id
+                                    );
+
+                                    await this.fs.moveNode(
+
+                                        user.uid,
+
+                                        draggedId,
+
+                                        item.dataset.id
+
+                                    );
+
+                                    win.remove();
+
+                                    this.open();
+
+                                } catch (err) {
+
+                                    console.error(err);
+
+                                    alert(
+                                        "이동 실패"
+                                    );
+
+                                }
+
+                            }
+
+                        );
+
+                    }
+
+                    // -----------------
+                    // 더블클릭
+                    // -----------------
+
+                    item.addEventListener(
+
+                        "dblclick",
 
                         async () => {
 
@@ -585,87 +583,197 @@ height:300px;
                         });
 
 
-                    // -----------------
-                    // 우클릭 삭제
-                    // -----------------
+                    const openContextMenu = (
+                        x,
+                        y
+                    ) => {
 
-                    item.addEventListener(
+                        document
+                            .querySelectorAll(
+                                ".context-menu"
+                            )
+                            .forEach(
+                                menu => menu.remove()
+                            );
 
-                        "contextmenu",
+                        const menu =
+                            document.createElement(
+                                "div"
+                            );
 
-                        async (e) => {
+                        menu.className =
+                            "context-menu";
 
-                            e.preventDefault();
+                        menu.style.left =
+                            `${x}px`;
 
-                            const id =
-                                item.dataset.id;
+                        menu.style.top =
+                            `${y}px`;
 
-                            const name =
-                                item.textContent
-                                .replace("📁", "")
-                                .replace("📄", "")
-                                .trim();
+                        menu.innerHTML = `
 
+<div
+class="context-menu-item"
+data-action="rename"
+>
+이름 변경
+</div>
 
-                            const action =
-    prompt(
-        `${name}
+<div
+class="context-menu-item"
+data-action="move"
+>
+이동
+</div>
 
-1 = 이름 변경
-2 = 이동
-3 = 삭제`
-    );
+<div
+class="context-menu-item"
+data-action="delete"
+>
+삭제
+</div>
 
-if (!action) return;
+`;
 
-try {
+                        document.body.appendChild(
+                            menu
+                        );
 
-    if (action === "1") {
+                        const id =
+                            item.dataset.id;
 
-        const newName =
-            prompt(
-                "새 이름"
-            );
+                        const name =
+                            item.textContent
+                            .replace("📁", "")
+                            .replace("📄", "")
+                            .trim();
 
-        if (
-            !newName ||
-            !newName.trim()
-        ) return;
+                        menu
+                            .querySelectorAll(
+                                ".context-menu-item"
+                            )
+                            .forEach(
 
-        await this.fs.renameNode(
-            user.uid,
-            id,
-            newName.trim()
-        );
+                                button => {
 
-        alert("이름 변경 완료");
+                                    button.addEventListener(
 
-    }
+                                        "click",
 
-    else if (
-    action === "2"
-) {
+                                        async () => {
 
-    const folders =
-        (
-            await this.fs.getAllNodes(
-                user.uid
-            )
-        ).filter(
-            node =>
-                node.type ===
-                "folder"
-        );
+                                            try {
 
-    const moveWindow =
-        this.wm.createWindow(
+                                                const action =
+                                                    button.dataset.action;
 
-            "이동",
+                                                if (
+                                                    action ===
+                                                    "rename"
+                                                ) {
 
-            folders.map(
-                folder =>
+                                                    const newName =
+                                                        prompt(
+                                                            "새 이름"
+                                                        );
 
-`
+                                                    if (
+                                                        !newName ||
+                                                        !newName.trim()
+                                                    ) return;
+
+                                                    await this.fs.renameNode(
+
+                                                        user.uid,
+
+                                                        id,
+
+                                                        newName.trim()
+
+                                                    );
+
+                                                } else if (
+                                                    action ===
+                                                    "move"
+                                                ) {
+
+                                                    const allNodes =
+                                                        await this.fs.getAllNodes(
+                                                            user.uid
+                                                        );
+
+                                                    const isDescendant = (
+                                                        targetId,
+                                                        parentId
+                                                    ) => {
+
+                                                        const children =
+                                                            allNodes.filter(
+                                                                node =>
+                                                                node.parentId ===
+                                                                parentId
+                                                            );
+
+                                                        for (
+                                                            const child of children
+                                                        ) {
+
+                                                            if (
+                                                                child.id === targetId
+                                                            ) {
+
+                                                                return true;
+
+                                                            }
+
+                                                            if (
+                                                                isDescendant(
+                                                                    targetId,
+                                                                    child.id
+                                                                )
+                                                            ) {
+
+                                                                return true;
+
+                                                            }
+
+                                                        }
+
+                                                        return false;
+
+                                                    };
+
+                                                    const folders =
+                                                        allNodes.filter(
+
+                                                            node =>
+
+                                                            node.type ===
+                                                            "folder"
+
+                                                            &&
+
+                                                            node.id !== id
+
+                                                            &&
+
+                                                            !isDescendant(
+                                                                node.id,
+                                                                id
+                                                            )
+
+                                                        );
+
+                                                    const moveWindow =
+                                                        this.wm.createWindow(
+
+                                                            "이동",
+
+                                                            folders.map(
+
+                                                                folder =>
+
+                                                                `
 <div
 class="move-folder"
 data-id="${folder.id}"
@@ -678,110 +786,203 @@ border-bottom:1px solid #444;
 📁 ${folder.name}
 </div>
 `
-            ).join("")
+                                                            ).join("")
 
-        );
+                                                        );
 
-    moveWindow
-        .querySelectorAll(
-            ".move-folder"
-        )
-        .forEach(
+                                                    moveWindow
+                                                        .querySelectorAll(
+                                                            ".move-folder"
+                                                        )
+                                                        .forEach(
 
-            folderItem => {
+                                                            folderItem => {
 
-                folderItem
-                    .addEventListener(
+                                                                folderItem
+                                                                    .addEventListener(
 
-                        "click",
+                                                                        "click",
 
-                        async () => {
+                                                                        async () => {
 
-                            try {
+                                                                            try {
 
-                                await this.fs.moveNode(
+                                                                                await this.fs.moveNode(
 
-                                    user.uid,
+                                                                                    user.uid,
 
-                                    id,
+                                                                                    id,
 
-                                    folderItem.dataset.id
+                                                                                    folderItem.dataset.id
 
-                                );
+                                                                                );
 
-                                alert(
-                                    "이동 완료"
-                                );
+                                                                                moveWindow.remove();
 
-                                moveWindow.remove();
+                                                                                win.remove();
 
-                                win.remove();
+                                                                                this.open();
 
-                                this.open();
+                                                                            } catch (err) {
 
+                                                                                alert(
+                                                                                    err.message
+                                                                                );
+
+                                                                            }
+
+                                                                        }
+
+                                                                    );
+
+                                                            }
+
+                                                        );
+
+                                                } else if (
+                                                    action ===
+                                                    "delete"
+                                                ) {
+
+                                                    if (
+                                                        !confirm(
+                                                            `${name} 삭제할까?`
+                                                        )
+                                                    ) return;
+
+                                                    await this.fs.deleteNode(
+
+                                                        user.uid,
+
+                                                        id
+
+                                                    );
+
+                                                }
+
+                                                menu.remove();
+
+                                                win.remove();
+
+                                                this.open();
+
+                                            } catch (err) {
+
+                                                console.error(
+                                                    err
+                                                );
+
+                                                alert(
+                                                    err.message
+                                                );
+
+                                            }
+
+                                        }
+
+                                    );
+
+                                }
+
+                            );
+
+                        document.addEventListener(
+
+                            "click",
+
+                            () => {
+
+                                menu.remove();
+
+                            },
+
+                            {
+                                once: true
                             }
 
-                            catch (err) {
+                        );
 
-                                console.error(
-                                    err
-                                );
+                    };
 
-                                alert(
-                                    "이동 실패"
-                                );
+                    item.addEventListener(
 
-                            }
+                        "contextmenu",
+
+                        e => {
+
+                            e.preventDefault();
+
+                            openContextMenu(
+
+                                e.clientX,
+
+                                e.clientY
+
+                            );
 
                         }
 
                     );
 
-            }
+                    let pressTimer;
 
-        );
+                    item.addEventListener(
 
-}
+                        "touchstart",
 
-else if (
-    action === "3"
-) {
+                        e => {
 
-    const confirmDelete =
-        confirm(
-            `${name} 삭제할까?`
-        );
+                            const touch =
+                                e.touches[0];
 
-    if (
-        !confirmDelete
-    ) return;
+                            pressTimer =
+                                setTimeout(
 
-    await this.fs.deleteNode(
-        user.uid,
-        id
-    );
+                                    () => {
 
-    alert("삭제 완료");
+                                        openContextMenu(
 
-}
+                                            touch.clientX,
 
-    
-    
-    win.remove();
+                                            touch.clientY
 
-    this.open();
+                                        );
 
-} catch (err) {
+                                    },
 
-    console.error(err);
+                                    700
 
-    alert(
-        "작업 실패"
-    );
+                                );
 
-}
+                        }
 
-}
+                    );
+
+                    item.addEventListener(
+
+                        "touchend",
+
+                        () => {
+
+                            clearTimeout(
+                                pressTimer
+                            );
+
+                        }
+
+                    );
+
+                    item.addEventListener(
+
+                        "touchmove",
+
+                        () => {
+
+                            clearTimeout(
+                                pressTimer
+                            );
+
+                        }
 
                     );
 
@@ -791,4 +992,4 @@ else if (
 
     }
 
-                        }
+}
