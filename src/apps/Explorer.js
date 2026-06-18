@@ -30,11 +30,21 @@ export default class Explorer {
 
         try {
 
-            nodes =
-                await this.fs.getNodes(
-                    user.uid,
-                    this.getCurrentFolder()
-                );
+          nodes =
+    await this.fs.getNodes(
+        user.uid,
+        this.getCurrentFolder()
+    );
+
+console.log(
+    "CURRENT FOLDER",
+    this.getCurrentFolder()
+);
+
+console.log(
+    "NODES",
+    nodes
+);
 
         } catch (err) {
 
@@ -744,25 +754,30 @@ data-action="delete"
                                                     };
 
                                                     const folders =
-                                                        allNodes.filter(
+    allNodes.filter(
 
-                                                            node =>
+        node =>
 
-                                                            node.type ===
-                                                            "folder"
+        node.type ===
+        "folder"
 
-                                                            &&
+        &&
 
-                                                            node.id !== id
+        node.id !== id
 
-                                                            &&
+        &&
 
-                                                            !isDescendant(
-                                                                node.id,
-                                                                id
-                                                            )
+        !isDescendant(
+            node.id,
+            id
+        )
 
-                                                        );
+    );
+
+console.log(
+    "MOVE TARGETS",
+    folders
+);
 
                                                     const moveWindow =
                                                         this.wm.createWindow(
