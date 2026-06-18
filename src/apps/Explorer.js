@@ -58,23 +58,23 @@ export default class Explorer {
 
             nodes.length === 0
 
-            ?
+                ?
 
-            `<div>폴더가 비어있습니다.</div>`
+                `<div>폴더가 비어있습니다.</div>`
 
-            :
+                :
 
-            nodes.map(node => {
+                nodes.map(node => {
 
-                const safeName =
-                    node.name
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#39;");
+                    const safeName =
+                        node.name
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#39;");
 
-                return `
+                    return `
 
 <div
     class="file-item"
@@ -91,11 +91,10 @@ export default class Explorer {
     "
 >
 
-    ${
-        node.type === "folder"
-        ? "📁"
-        : "📄"
-    }
+    ${node.type === "folder"
+                            ? "📁"
+                            : "📄"
+                        }
 
     ${safeName}
 
@@ -103,7 +102,7 @@ export default class Explorer {
 
 `;
 
-            }).join("");
+                }).join("");
 
         const win =
             this.wm.createWindow(
@@ -463,9 +462,9 @@ ${this.currentFolderNames.join("/")}
 
                             const name =
                                 item.textContent
-                                .replace("📁", "")
-                                .replace("📄", "")
-                                .trim();
+                                    .replace("📁", "")
+                                    .replace("📄", "")
+                                    .trim();
 
 
                             // 폴더 열기
@@ -511,12 +510,12 @@ ${this.currentFolderNames.join("/")}
 
                                 const content =
                                     (file.content || "")
-                                    .replace(/&/g, "&amp;")
-                                    .replace(/</g, "&lt;")
-                                    .replace(/>/g, "&gt;")
-                                    .replace(/"/g, "&quot;")
-                                    .replace(/'/g, "&#39;")
-                                    .replace(/<\/textarea>/gi, "&lt;/textarea&gt;");
+                                        .replace(/&/g, "&amp;")
+                                        .replace(/</g, "&lt;")
+                                        .replace(/>/g, "&gt;")
+                                        .replace(/"/g, "&quot;")
+                                        .replace(/'/g, "&#39;")
+                                        .replace(/<\/textarea>/gi, "&lt;/textarea&gt;");
 
                                 const noteWin =
                                     this.wm.createWindow(
@@ -556,10 +555,10 @@ height:300px;
 
                                             const content =
                                                 noteWin
-                                                .querySelector(
-                                                    "#editor"
-                                                )
-                                                .value;
+                                                    .querySelector(
+                                                        "#editor"
+                                                    )
+                                                    .value;
 
 
                                             try {
@@ -654,9 +653,9 @@ data-action="delete"
 
                         const name =
                             item.textContent
-                            .replace("📁", "")
-                            .replace("📄", "")
-                            .trim();
+                                .replace("📁", "")
+                                .replace("📄", "")
+                                .trim();
 
                         menu
                             .querySelectorAll(
@@ -724,8 +723,8 @@ data-action="delete"
                                                         const children =
                                                             allNodes.filter(
                                                                 node =>
-                                                                node.parentId ===
-                                                                parentId
+                                                                    node.parentId ===
+                                                                    parentId
                                                             );
 
                                                         for (
@@ -762,19 +761,19 @@ data-action="delete"
 
                                                             node =>
 
-                                                            node.type ===
-                                                            "folder"
+                                                                node.type ===
+                                                                "folder"
 
-                                                            &&
+                                                                &&
 
-                                                            node.id !== id
+                                                                node.id !== id
 
-                                                            &&
+                                                                &&
 
-                                                            !isDescendant(
-                                                                node.id,
-                                                                id
-                                                            )
+                                                                !isDescendant(
+                                                                    node.id,
+                                                                    id
+                                                                )
 
                                                         );
 
@@ -787,7 +786,7 @@ data-action="delete"
                                                         "MOVE WINDOW HTML",
                                                         folders.map(
                                                             folder =>
-                                                    `
+                                                                `
                                                     <div
                                                     class="move-folder"
                                                     data-id="${folder.id}"
@@ -799,16 +798,16 @@ data-action="delete"
                                                     );
                                                     let moveWindow;
 
-try {
+                                                    try {
 
-    moveWindow =
-        this.wm.createWindow(
+                                                        moveWindow =
+                                                            this.wm.createWindow(
 
-            "이동",
+                                                                "이동",
 
-            folders.map(
-                folder =>
-`
+                                                                folders.map(
+                                                                    folder =>
+                                                                        `
 <div
 class="move-folder"
 data-id="${folder.id}"
@@ -816,77 +815,72 @@ data-id="${folder.id}"
 📁 ${folder.name}
 </div>
 `
-            ).join("")
-        );
+                                                                ).join("")
+                                                            );
 
-    console.log(
-        "MOVE WINDOW CREATED",
-        moveWindow
-    );
 
-} catch (err) {
 
-    console.error(
-        "CREATE WINDOW ERROR",
-        err
-    );
+                                                    } catch (err) {
 
-}
+                                                        console.error(
+                                                            "CREATE WINDOW ERROR",
+                                                            err
+                                                        );
 
-console.log(
-    "MOVE WINDOW CREATED",
-    moveWindow
-);
-                                                        
+                                                    }
+
+                                                    console.log(
+                                                        "MOVE WINDOW CREATED",
+                                                        moveWindow
+                                                    );
 
                                                     moveWindow
-                                                        .querySelectorAll(
-                                                            ".move-folder"
-                                                        )
+                                                        .querySelectorAll(".move-folder")
                                                         .forEach(
 
                                                             folderItem => {
 
-                                                                folderItem
-                                                                    .addEventListener(
+                                                                folderItem.addEventListener(
 
-                                                                        "click",
+                                                                    "click",
 
-                                                                        async () => {
+                                                                    async () => {
 
-                                                                            try {
+                                                                        try {
 
-                                                                                await this.fs.moveNode(
+                                                                            await this.fs.moveNode(
 
-                                                                                    user.uid,
+                                                                                user.uid,
+                                                                                id,
+                                                                                folderItem.dataset.id
 
-                                                                                    id,
+                                                                            );
 
-                                                                                    folderItem.dataset.id
+                                                                            moveWindow.remove();
+                                                                            win.remove();
+                                                                            this.open();
 
-                                                                                );
+                                                                        } catch (err) {
 
-                                                                                moveWindow.remove();
-
-                                                                                win.remove();
-
-                                                                                this.open();
-
-                                                                            } catch (err) {
-
-                                                                                alert(
-                                                                                    err.message
-                                                                                );
-
-                                                                            }
+                                                                            console.error(err);
+                                                                            alert(err.message);
 
                                                                         }
 
-                                                                    );
+                                                                    }
+
+                                                                );
 
                                                             }
 
                                                         );
+
+                                                    return;
+
+
+
+
+
 
                                                 } else if (
                                                     action ===
