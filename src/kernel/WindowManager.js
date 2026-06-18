@@ -12,9 +12,21 @@ export default class WindowManager {
             <div class="window-header">
                 <span>${title}</span>
 
-                <div class="window-buttons">
-                    <button class="close-btn">✕</button>
-                </div>
+<div class="window-buttons">
+
+    <button class="min-btn">
+        ─
+    </button>
+
+    <button class="max-btn">
+        □
+    </button>
+
+    <button class="close-btn">
+        ✕
+    </button>
+
+</div>
             </div>
 
             <div class="window-content">
@@ -35,10 +47,105 @@ export default class WindowManager {
         });
 
         windowEl
-            .querySelector('.close-btn')
-            .addEventListener('click', () => {
-                windowEl.remove();
-            });
+    .querySelector('.close-btn')
+    .addEventListener('click', () => {
+        windowEl.remove();
+    });
+
+windowEl
+    .querySelector('.min-btn')
+    .addEventListener('click', () => {
+
+        const content =
+            windowEl.querySelector(
+                '.window-content'
+            );
+
+        if (
+            content.style.display ===
+            'none'
+        ) {
+
+            content.style.display =
+                '';
+
+            windowEl.style.height =
+                '400px';
+
+        }
+
+        else {
+
+            content.style.display =
+                'none';
+
+            windowEl.style.height =
+                '40px';
+
+        }
+
+    });
+
+windowEl
+    .querySelector('.max-btn')
+    .addEventListener('click', () => {
+
+        if (
+            windowEl.dataset.maximized ===
+            'true'
+        ) {
+
+            windowEl.style.left =
+                windowEl.dataset.oldLeft;
+
+            windowEl.style.top =
+                windowEl.dataset.oldTop;
+
+            windowEl.style.width =
+                windowEl.dataset.oldWidth;
+
+            windowEl.style.height =
+                windowEl.dataset.oldHeight;
+
+            windowEl.dataset.maximized =
+                'false';
+
+        }
+
+        else {
+
+            windowEl.dataset.oldLeft =
+                windowEl.style.left;
+
+            windowEl.dataset.oldTop =
+                windowEl.style.top;
+
+            windowEl.dataset.oldWidth =
+    getComputedStyle(windowEl)
+    .width;
+
+windowEl.dataset.oldHeight =
+    getComputedStyle(windowEl)
+    .height;    
+
+            windowEl.style.left =
+                '0';
+
+            windowEl.style.top =
+                '0';
+
+            windowEl.style.width =
+                '100%';
+
+            windowEl.style.height =
+                'calc(100% - 48px)';
+
+            windowEl.dataset.maximized =
+                'true';
+
+        }
+
+    });
 
         return windowEl;
     }
@@ -59,7 +166,13 @@ export default class WindowManager {
         });
 
         document.addEventListener('mousemove', (e) => {
-            if (!dragging) return;
+
+    if (!dragging) return;
+
+    if (
+        windowEl.dataset.maximized ===
+        'true'
+    ) return;
 
             windowEl.style.left =
                 e.clientX - offsetX + 'px';
