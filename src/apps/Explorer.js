@@ -787,7 +787,7 @@ data-action="delete"
                                                         "MOVE WINDOW HTML",
                                                         folders.map(
                                                             folder =>
-                                                    `
+                                                            `
                                                     <div
                                                     class="move-folder"
                                                     data-id="${folder.id}"
@@ -799,10 +799,6 @@ data-action="delete"
                                                     );
                                                     const moveWindow =
                                                         this.wm.createWindow(
-                                                            console.log(
-                                                                "MOVE WINDOW CREATED",
-                                                                moveWindow
-                                                            );
 
                                                             "이동",
 
@@ -814,11 +810,6 @@ data-action="delete"
 <div
 class="move-folder"
 data-id="${folder.id}"
-style="
-padding:8px;
-cursor:pointer;
-border-bottom:1px solid #444;
-"
 >
 📁 ${folder.name}
 </div>
@@ -827,209 +818,215 @@ border-bottom:1px solid #444;
 
                                                         );
 
-                                                    moveWindow
-                                                        .querySelectorAll(
-                                                            ".move-folder"
-                                                        )
-                                                        .forEach(
+                                                    console.log(
+                                                        "MOVE WINDOW CREATED",
+                                                        moveWindow
+                                                    );
+                                                );
 
-                                                            folderItem => {
+                                                moveWindow
+                                                    .querySelectorAll(
+                                                        ".move-folder"
+                                                    )
+                                                    .forEach(
 
-                                                                folderItem
-                                                                    .addEventListener(
+                                                        folderItem => {
 
-                                                                        "click",
+                                                            folderItem
+                                                                .addEventListener(
 
-                                                                        async () => {
+                                                                    "click",
 
-                                                                            try {
+                                                                    async () => {
 
-                                                                                await this.fs.moveNode(
+                                                                        try {
 
-                                                                                    user.uid,
+                                                                            await this.fs.moveNode(
 
-                                                                                    id,
+                                                                                user.uid,
 
-                                                                                    folderItem.dataset.id
+                                                                                id,
 
-                                                                                );
+                                                                                folderItem.dataset.id
 
-                                                                                moveWindow.remove();
+                                                                            );
 
-                                                                                win.remove();
+                                                                            moveWindow.remove();
 
-                                                                                this.open();
+                                                                            win.remove();
 
-                                                                            } catch (err) {
+                                                                            this.open();
 
-                                                                                alert(
-                                                                                    err.message
-                                                                                );
+                                                                        } catch (err) {
 
-                                                                            }
+                                                                            alert(
+                                                                                err.message
+                                                                            );
 
                                                                         }
 
-                                                                    );
+                                                                    }
 
-                                                            }
+                                                                );
 
-                                                        );
-
-                                                } else if (
-                                                    action ===
-                                                    "delete"
-                                                ) {
-
-                                                    if (
-                                                        !confirm(
-                                                            `${name} 삭제할까?`
-                                                        )
-                                                    ) return;
-
-                                                    await this.fs.deleteNode(
-
-                                                        user.uid,
-
-                                                        id
+                                                        }
 
                                                     );
 
-                                                }
+                                            } else if (
+                                                action ===
+                                                "delete"
+                                            ) {
 
-                                                menu.remove();
+                                                if (
+                                                    !confirm(
+                                                        `${name} 삭제할까?`
+                                                    )
+                                                ) return;
 
-                                                win.remove();
+                                                await this.fs.deleteNode(
 
-                                                this.open();
+                                                    user.uid,
 
-                                            } catch (err) {
+                                                    id
 
-                                                console.error(
-                                                    err
-                                                );
-
-                                                alert(
-                                                    err.message
                                                 );
 
                                             }
 
+                                            menu.remove();
+
+                                            win.remove();
+
+                                            this.open();
+
+                                        } catch (err) {
+
+                                            console.error(
+                                                err
+                                            );
+
+                                            alert(
+                                                err.message
+                                            );
+
                                         }
 
-                                    );
-
-                                }
-
-                            );
-
-                        setTimeout(() => {
-
-                            document.addEventListener(
-
-                                "click",
-
-                                () => {
-
-                                    menu.remove();
-
-                                },
-
-                                {
-                                    once: true
-                                }
-
-                            );
-
-                        }, 100);
-                    };
-
-                    item.addEventListener(
-
-                        "contextmenu",
-
-                        e => {
-
-                            e.preventDefault();
-
-                            openContextMenu(
-
-                                e.clientX,
-
-                                e.clientY
-
-                            );
-
-                        }
-
-                    );
-
-                    let pressTimer;
-
-                    item.addEventListener(
-
-                        "touchstart",
-
-                        e => {
-
-                            const touch =
-                                e.touches[0];
-
-                            pressTimer =
-                                setTimeout(
-
-                                    () => {
-
-                                        openContextMenu(
-
-                                            touch.clientX,
-
-                                            touch.clientY
-
-                                        );
-
-                                    },
-
-                                    700
+                                    }
 
                                 );
 
-                        }
+                            }
 
                     );
 
-                    item.addEventListener(
+                    setTimeout(() => {
 
-                        "touchend",
+                        document.addEventListener(
 
-                        () => {
+                            "click",
 
-                            clearTimeout(
-                                pressTimer
+                            () => {
+
+                                menu.remove();
+
+                            },
+
+                            {
+                                once: true
+                            }
+
+                        );
+
+                    }, 100);
+                };
+
+                item.addEventListener(
+
+                    "contextmenu",
+
+                    e => {
+
+                        e.preventDefault();
+
+                        openContextMenu(
+
+                            e.clientX,
+
+                            e.clientY
+
+                        );
+
+                    }
+
+                );
+
+                let pressTimer;
+
+                item.addEventListener(
+
+                    "touchstart",
+
+                    e => {
+
+                        const touch =
+                            e.touches[0];
+
+                        pressTimer =
+                            setTimeout(
+
+                                () => {
+
+                                    openContextMenu(
+
+                                        touch.clientX,
+
+                                        touch.clientY
+
+                                    );
+
+                                },
+
+                                700
+
                             );
 
-                        }
+                    }
 
-                    );
+                );
 
-                    item.addEventListener(
+                item.addEventListener(
 
-                        "touchmove",
+                    "touchend",
 
-                        () => {
+                    () => {
 
-                            clearTimeout(
-                                pressTimer
-                            );
+                        clearTimeout(
+                            pressTimer
+                        );
 
-                        }
+                    }
 
-                    );
+                );
 
-                }
+                item.addEventListener(
 
-            );
+                    "touchmove",
 
-    }
+                    () => {
+
+                        clearTimeout(
+                            pressTimer
+                        );
+
+                    }
+
+                );
+
+            }
+
+    );
 
 }
+
+                                }
