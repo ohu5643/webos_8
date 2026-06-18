@@ -302,42 +302,107 @@ export default class FileSystem {
     }
 
     async moveNode(
-        uid,
-        nodeId,
-        newParentId
+    uid,
+    nodeId,
+    newParentId
+) {
+
+    if (
+        nodeId === newParentId
     ) {
 
-        const ref =
-            doc(
-                db,
-                "users",
-                uid,
-                "filesystem",
-                nodeId
-            );
-
-        const snapshot =
-            await getDoc(ref);
-
-        if (!snapshot.exists()) {
-
-            throw new Error(
-                "Node not found"
-            );
-
-        }
-
-        const oldData =
-            snapshot.data();
-
-        await setDoc(
-            ref,
-            {
-                ...oldData,
-                parentId: newParentId
-            }
+        throw new Error(
+            "Cannot move into itself"
         );
 
     }
 
+    const allNodes =
+        await this.getAllNodes(
+            uid
+        );
+
+    const isDescendant = (
+        targetId,
+        parentId
+    ) => {
+
+        const children =
+            allNodes.filter(
+                node =>
+                    node.parentId === parentId
+            );
+
+        for (
+            const child of children
+        ) {
+
+            if (
+                child.id === targetId
+            ) {
+                return true;
             }
+
+            if (
+                isDescendant(
+                    targetId,
+                    child.id
+                )
+            ) {
+                return true;
+            }
+
+        }
+
+        return false;
+
+    };
+
+    if (
+        isDescendant(
+            newParentId,
+            nodeId
+        )
+    ) {
+
+        throw new Error(
+            "Cannot move into child folder"
+        );
+
+    }
+
+    const ref =
+        doc(
+            db,
+            "users",
+            uid,
+            "filesystem",
+            nodeId
+        );
+
+    const snapshot =
+        await getDoc(ref);
+
+    if (!snapshot.exists()) {
+
+        throw new Error(
+            "Node not found"
+        );
+
+    }
+
+    const oldData =
+        snapshot.data();
+
+    await setDoc(
+        ref,
+        {
+            ...oldData,
+            parentId: newParentId
+        }
+    );
+
+}
+
+    
+}
