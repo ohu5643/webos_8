@@ -783,8 +783,26 @@ data-action="delete"
                                                         folders
                                                     );
 
+                                                    console.log(
+                                                        "MOVE WINDOW HTML",
+                                                        folders.map(
+                                                            folder =>
+                                                    `
+                                                    <div
+                                                    class="move-folder"
+                                                    data-id="${folder.id}"
+                                                    >
+                                                    📁 ${folder.name}
+                                                    </div>
+                                                    `
+                                                        ).join("")
+                                                    );
                                                     const moveWindow =
                                                         this.wm.createWindow(
+                                                            console.log(
+                                                                "MOVE WINDOW CREATED",
+                                                                moveWindow
+                                                            );
 
                                                             "이동",
 
