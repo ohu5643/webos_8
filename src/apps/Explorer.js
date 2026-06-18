@@ -30,21 +30,21 @@ export default class Explorer {
 
         try {
 
-          nodes =
-    await this.fs.getNodes(
-        user.uid,
-        this.getCurrentFolder()
-    );
+            nodes =
+                await this.fs.getNodes(
+                    user.uid,
+                    this.getCurrentFolder()
+                );
 
-console.log(
-    "CURRENT FOLDER",
-    this.getCurrentFolder()
-);
+            console.log(
+                "CURRENT FOLDER",
+                this.getCurrentFolder()
+            );
 
-console.log(
-    "NODES",
-    nodes
-);
+            console.log(
+                "NODES",
+                nodes
+            );
 
         } catch (err) {
 
@@ -707,6 +707,10 @@ data-action="delete"
                                                     "move"
                                                 ) {
 
+                                                    console.log(
+                                                        "MOVE CLICKED"
+                                                    );
+
                                                     const allNodes =
                                                         await this.fs.getAllNodes(
                                                             user.uid
@@ -754,30 +758,30 @@ data-action="delete"
                                                     };
 
                                                     const folders =
-    allNodes.filter(
+                                                        allNodes.filter(
 
-        node =>
+                                                            node =>
 
-        node.type ===
-        "folder"
+                                                            node.type ===
+                                                            "folder"
 
-        &&
+                                                            &&
 
-        node.id !== id
+                                                            node.id !== id
 
-        &&
+                                                            &&
 
-        !isDescendant(
-            node.id,
-            id
-        )
+                                                            !isDescendant(
+                                                                node.id,
+                                                                id
+                                                            )
 
-    );
+                                                        );
 
-console.log(
-    "MOVE TARGETS",
-    folders
-);
+                                                    console.log(
+                                                        "MOVE TARGETS",
+                                                        folders
+                                                    );
 
                                                     const moveWindow =
                                                         this.wm.createWindow(
@@ -901,22 +905,25 @@ border-bottom:1px solid #444;
 
                             );
 
-                        document.addEventListener(
+                        setTimeout(() => {
 
-                            "click",
+                            document.addEventListener(
 
-                            () => {
+                                "click",
 
-                                menu.remove();
+                                () => {
 
-                            },
+                                    menu.remove();
 
-                            {
-                                once: true
-                            }
+                                },
 
-                        );
+                                {
+                                    once: true
+                                }
 
+                            );
+
+                        }, 100);
                     };
 
                     item.addEventListener(
