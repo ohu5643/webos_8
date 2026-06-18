@@ -56,6 +56,13 @@ windowEl
     .querySelector('.min-btn')
     .addEventListener('click', () => {
 
+        if (
+            windowEl.dataset.maximized ===
+            'true'
+        ) {
+            return;
+        }
+
         const content =
             windowEl.querySelector(
                 '.window-content'
@@ -70,11 +77,17 @@ windowEl
                 '';
 
             windowEl.style.height =
-                '400px';
+                windowEl.dataset.oldMinHeight
+                || '400px';
 
         }
 
         else {
+
+            windowEl.dataset.oldMinHeight =
+                getComputedStyle(
+                    windowEl
+                ).height;
 
             content.style.display =
                 'none';
